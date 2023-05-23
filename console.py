@@ -33,7 +33,7 @@ class HBNBCommand(cmd.Cmd):
         line_args = line.split('.', 1)
         try:
             line_cpy = line_args[1][line_args[1].index('(') + 1:]
-            line_cpy = line_cpy[line_cpy.index(')')]
+            line_cpy = line_cpy[:line_cpy.index(')')]
         except (ValueError, IndexError):
             print("*** Unknown syntax: {}".format(line))
             return
@@ -46,6 +46,9 @@ class HBNBCommand(cmd.Cmd):
                     n += 1
             print(n)
         else:
+            if command == "create":
+                print("*** Unknown syntax: {}".format(line))
+                return
             try:
                 func = getattr(self, 'do_' + command)
             except AttributeError:
@@ -136,16 +139,22 @@ class HBNBCommand(cmd.Cmd):
             elif len(args) < 2:
                 print("** instance id missing **")
             elif len(args) < 3:
+                key = f"{args[0]}.{args[1]}"
+                if key not in storage.all():
+                    print("** no instance found **")
+                    return
                 print("** attribute name missing **")
             elif len(args) < 4:
                 print("** value missing **")
             else:
                 key = f"{args[0]}.{args[1]}"
-                if key not in storage.all():
-                    print("** no instance found **")
+                obj = storage.all()[key]
+                if args[2] in obj.__class__.__dict__.keys():
+                    valtype = type(obj.__class__.__dict__[args[2]])
+                    obj.__dict__[args[2]] = valtype(args[3])
                 else:
-                    setattr(storage.all()[key], args[2], args[3])
-                    storage.all()[key].save()
+                    obj.__dict__[args[2]] = args[3].strip("'\"")
+                storage.all()[key].save()
         else:
             print("** class name missing **")
 

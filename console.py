@@ -31,7 +31,12 @@ class HBNBCommand(cmd.Cmd):
     def default(self, line: str) -> None:
         args = ""
         line_args = line.split('.', 1)
-        line_cpy = line_args[1][line_args[1].index('(') + 1:-1]
+        try:
+            line_cpy = line_args[1][line_args[1].index('(') + 1:]
+            line_cpy = line_cpy[line_cpy.index(')')]
+        except (ValueError, IndexError):
+            print("*** Unknown syntax: {}".format(line))
+            return
         args += line_args[0] + ' ' + line_cpy.strip('"')
         command = line_args[1][:line_args[1].index('(')]
         if command == "count":
@@ -41,7 +46,11 @@ class HBNBCommand(cmd.Cmd):
                     n += 1
             print(n)
         else:
-            func = getattr(self, 'do_' + command)
+            try:
+                func = getattr(self, 'do_' + command)
+            except AttributeError:
+                print("*** Unknown syntax: {}".format(command))
+                return
             func(args)
 
     def do_quit(self, line):

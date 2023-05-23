@@ -148,6 +148,9 @@ class HBNBCommand(cmd.Cmd):
                 print("** value missing **")
             else:
                 key = f"{args[0]}.{args[1]}"
+                if key not in storage.all():
+                    print("** no instance found **")
+                    return
                 obj = storage.all()[key]
                 if args[2] in obj.__class__.__dict__.keys():
                     valtype = type(obj.__class__.__dict__[args[2]])

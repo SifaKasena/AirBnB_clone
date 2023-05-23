@@ -1296,6 +1296,7 @@ class TestHBNBCommand_update(unittest.TestCase):
         test_dict = storage.all()["Place.{}".format(tId)].__dict__
         self.assertEqual(7.2, test_dict["latitude"])
 
+
 class TestHBNBCommand_count(unittest.TestCase):
     """Unittests for testing count method of HBNB comand interpreter."""
 
